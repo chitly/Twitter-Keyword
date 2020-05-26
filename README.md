@@ -7,5 +7,5 @@ https://deno.land/manual/getting_started/installation
 
 ## How to run
 ```
-deno run --allow-net index.ts
+deno run --allow-read --allow-net index.ts
 ```
