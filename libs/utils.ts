@@ -4,10 +4,16 @@ import env from "../modules/dotenv.ts";
 
 import { Tweet, DBTweets } from "./types.ts";
 
-export const getQuery = (keyword: string, date: Moment): string => {
+export const getQuery = (
+  keyword: string,
+  hashtag: string,
+  date: Moment,
+): string => {
   const since = moment(date).format("YYYY-MM-DD");
   const until = moment(date).add(1, "days").format("YYYY-MM-DD");
-  const query = `${keyword} until:${until} since:${since}`;
+  const query = `(${keyword.split(",").join(" OR ")}) (#${
+    hashtag.split(",").join(" OR #")
+  }) until:${until} since:${since}`;
   return query;
 };
 

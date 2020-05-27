@@ -11,8 +11,10 @@ import {
 import { DBTweets } from "./libs/types.ts";
 
 const startTime = moment();
-const { keyword, since, until } = args;
-console.log("keyword", keyword, "since", since, "until", until);
+const { keyword, hashtag, since, until } = args;
+console.log(
+  `keyword=${keyword} hashtag=${hashtag} since=${since} until=${until}`,
+);
 const dbTweets: DBTweets = {
   ids: new Set(),
   tweets: [],
@@ -23,7 +25,7 @@ for (
   p >= moment(since, "YYYY-MM-DD");
   p = p.add(-1, "days")
 ) {
-  const query = getQuery(keyword, p);
+  const query = getQuery(keyword, hashtag, p);
   console.log("query", query);
   const queryTime = moment();
   const token = await fetchToken();
