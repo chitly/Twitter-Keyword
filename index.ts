@@ -29,11 +29,13 @@ for (
   const token = await fetchToken();
   let cursor = "";
 
-  let count = 0;
-  const maxTries = 3;
-  while (count < maxTries) {
+  let fetchRetry = 0;
+  const maxFetchRetries = 3;
+  while (fetchRetry < maxFetchRetries) {
     try {
-      while (true) {
+      let saveRetry = 0;
+      const maxSaveRetries = 3;
+      while (saveRetry < maxSaveRetries) {
         const tmpTime = moment();
         const { tweets, nextCursor } = await fetchTweets(
           query,
@@ -41,7 +43,8 @@ for (
           cursor,
         );
         if (!saveTweets(dbTweets, tweets)) {
-          break;
+          console.log("saveRetry", saveRetry);
+          if (++saveRetry === maxSaveRetries) break;
         }
         const timeUsed = moment.duration(moment().diff(tmpTime)).asSeconds();
         console.log("time used", timeUsed, "sec");
@@ -52,9 +55,9 @@ for (
       console.log("query time used", timeUsed, "sec");
       break;
     } catch (err) {
-      console.log("try", count, "cursor", cursor);
+      console.log("fetchRetry", fetchRetry, "cursor", cursor);
       await sleep(60);
-      if (++count == maxTries) throw err;
+      if (++fetchRetry === maxFetchRetries) throw err;
     }
   }
 }
