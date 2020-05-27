@@ -1,41 +1,64 @@
 import moment from "./modules/moment.ts";
+import args from "./modules/args.ts";
 
-import { fetchToken, fetchTweets, saveTweets, sleep } from "./libs/utils.ts";
+import {
+  getQuery,
+  fetchToken,
+  fetchTweets,
+  saveTweets,
+  sleep,
+} from "./libs/utils.ts";
 import { DBTweets } from "./libs/types.ts";
 
 const startTime = moment();
-const keyword = "โควิด until:2020-05-28 since:2020-05-27";
-const token = await fetchToken();
-let cursor = "";
+const { keyword, since, until } = args;
+console.log("keyword", keyword, "since", since, "until", until);
 const dbTweets: DBTweets = {
   ids: new Set(),
   tweets: [],
 };
 
-let count = 0;
-const maxTries = 3;
-while (count < maxTries) {
-  try {
-    do {
-      const tmpTime = moment();
-      const { tweets, nextCursor } = await fetchTweets(keyword, token, cursor);
-      if (!saveTweets(dbTweets, tweets)) {
-        break;
+for (
+  let p = moment(until, "YYYY-MM-DD");
+  p >= moment(since, "YYYY-MM-DD");
+  p = p.add(-1, "days")
+) {
+  const query = getQuery(keyword, p);
+  console.log("query", query);
+  const queryTime = moment();
+  const token = await fetchToken();
+  let cursor = "";
+
+  let count = 0;
+  const maxTries = 3;
+  while (count < maxTries) {
+    try {
+      while (true) {
+        const tmpTime = moment();
+        const { tweets, nextCursor } = await fetchTweets(
+          query,
+          token,
+          cursor,
+        );
+        if (!saveTweets(dbTweets, tweets)) {
+          break;
+        }
+        const timeUsed = moment.duration(moment().diff(tmpTime)).asSeconds();
+        console.log("time used", timeUsed, "sec");
+        console.log("got", dbTweets.tweets.length, "tweets");
+        cursor = nextCursor;
       }
-      const timeUsed = moment.duration(moment().diff(tmpTime)).asSeconds();
-      console.log("time used", timeUsed, "sec");
-      console.log("get", dbTweets.tweets.length, "tweets");
-      // console.log(dbTweets.tweets[dbTweets.tweets.length - 1]);
-      cursor = nextCursor;
-    } while (cursor);
-    const timeUsed = moment.duration(moment().diff(startTime)).asSeconds();
-    console.log("all time used", timeUsed, "sec");
-    break;
-  } catch (err) {
-    console.log("try", count, "cursor", cursor);
-    await sleep(60);
-    if (++count == maxTries) throw err;
+      const timeUsed = moment.duration(moment().diff(queryTime)).asSeconds();
+      console.log("query time used", timeUsed, "sec");
+      break;
+    } catch (err) {
+      console.log("try", count, "cursor", cursor);
+      await sleep(60);
+      if (++count == maxTries) throw err;
+    }
   }
 }
 
 // console.log(dbTweets.tweets.slice(0, 10));
+const timeUsed = moment.duration(moment().diff(startTime)).asSeconds();
+console.log("all time used", timeUsed, "sec");

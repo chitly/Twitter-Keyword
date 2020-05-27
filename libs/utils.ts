@@ -1,8 +1,15 @@
 import _ from "../modules/lodash.ts";
-import moment from "../modules/moment.ts";
+import moment, { Moment } from "../modules/moment.ts";
 import env from "../modules/dotenv.ts";
 
 import { Tweet, DBTweets } from "./types.ts";
+
+export const getQuery = (keyword: string, date: Moment): string => {
+  const since = moment(date).format("YYYY-MM-DD");
+  const until = moment(date).add(1, "days").format("YYYY-MM-DD");
+  const query = `${keyword} until:${until} since:${since}`;
+  return query;
+};
 
 export const fetchToken = async (): Promise<string> => {
   const url = "https://api.twitter.com/1.1/guest/activate.json";
