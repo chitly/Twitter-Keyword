@@ -40,14 +40,14 @@ for (
           token,
           cursor,
         );
-        const Nsaved = await saveTweets(tweets, idTweets);
-        if (Nsaved === 0) {
+        const { nTweets, nTweetsSaved } = await saveTweets(tweets, idTweets);
+        if (nTweets === 0) {
           console.log("saveRetry", saveRetry);
           if (++saveRetry === maxSaveRetries) break;
         }
         const timeUsed = moment.duration(moment().diff(tmpTime)).asSeconds();
         console.log("time used", timeUsed, "sec");
-        console.log("got", Nsaved, "tweets");
+        console.log(`got ${nTweets} tweets, and saved ${nTweetsSaved} tweets`);
         cursor = nextCursor;
       }
       const timeUsed = moment.duration(moment().diff(queryTime)).asSeconds();

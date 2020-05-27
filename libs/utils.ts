@@ -152,8 +152,9 @@ export const fetchTweets = async (
 export const saveTweets = async (
   tweets: Tweet[],
   idTweets: Set<string>,
-): Promise<number> => {
-  let saved = 0;
+): Promise<{ nTweets: number; nTweetsSaved: number }> => {
+  let nTweets = 0;
+  let nTweetsSaved = 0;
   for (const tweet of tweets) {
     const {
       parent_id,
@@ -170,7 +171,7 @@ export const saveTweets = async (
     } = tweet;
     if (!idTweets.has(id)) {
       idTweets.add(id);
-      saved++;
+      nTweets++;
     }
     const hasTweet = await db.query("SELECT 1 FROM Tweets WHERE Id = ?", [id]);
     if (hasTweet.length === 0) {
@@ -202,9 +203,10 @@ export const saveTweets = async (
           created_at,
         ],
       );
+      nTweetsSaved++;
     }
   }
-  return saved;
+  return { nTweets, nTweetsSaved };
 };
 
 export const sleep = (sec: number): Promise<any> => {
