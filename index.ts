@@ -8,17 +8,12 @@ import {
   saveTweets,
   sleep,
 } from "./libs/utils.ts";
-import { DBTweets } from "./libs/types.ts";
 
 const startTime = moment();
 const { keyword, hashtag, since, until } = args;
 console.log(
   `keyword=${keyword} hashtag=${hashtag} since=${since} until=${until}`,
 );
-const dbTweets: DBTweets = {
-  ids: new Set(),
-  tweets: [],
-};
 
 for (
   let p = moment(until, "YYYY-MM-DD");
@@ -30,6 +25,7 @@ for (
   const queryTime = moment();
   const token = await fetchToken();
   let cursor = "";
+  const idTweets: Set<string> = new Set();
 
   let fetchRetry = 0;
   const maxFetchRetries = 3;
@@ -44,13 +40,14 @@ for (
           token,
           cursor,
         );
-        if (!saveTweets(dbTweets, tweets)) {
+        const Nsaved = await saveTweets(tweets, idTweets);
+        if (Nsaved === 0) {
           console.log("saveRetry", saveRetry);
           if (++saveRetry === maxSaveRetries) break;
         }
         const timeUsed = moment.duration(moment().diff(tmpTime)).asSeconds();
         console.log("time used", timeUsed, "sec");
-        console.log("got", dbTweets.tweets.length, "tweets");
+        console.log("got", Nsaved, "tweets");
         cursor = nextCursor;
       }
       const timeUsed = moment.duration(moment().diff(queryTime)).asSeconds();
@@ -64,6 +61,5 @@ for (
   }
 }
 
-// console.log(dbTweets.tweets.slice(0, 10));
 const timeUsed = moment.duration(moment().diff(startTime)).asSeconds();
 console.log("all time used", timeUsed, "sec");

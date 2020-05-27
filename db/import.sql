@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `Tweets`;
 CREATE TABLE `Tweets` (
   `Id` varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `UserId` varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `Text` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `Text` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `Lang` varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `Nretweet` int NOT NULL,
   `Nfavorite` int NOT NULL,

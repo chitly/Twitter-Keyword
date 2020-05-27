@@ -2,7 +2,8 @@ import _ from "../modules/lodash.ts";
 import moment, { Moment } from "../modules/moment.ts";
 import env from "../modules/dotenv.ts";
 
-import { Tweet, DBTweets } from "./types.ts";
+import db from "./db.ts";
+import { Tweet } from "./types.ts";
 
 export const getQuery = (
   keyword: string,
@@ -11,9 +12,9 @@ export const getQuery = (
 ): string => {
   const since = moment(date).format("YYYY-MM-DD");
   const until = moment(date).add(1, "days").format("YYYY-MM-DD");
-  const query = `(${keyword.split(",").join(" OR ")}) (#${
-    hashtag.split(",").join(" OR #")
-  }) until:${until} since:${since}`;
+  const kQuery = keyword ? `(${keyword.split(",").join(" OR ")})` : "";
+  const hQuery = hashtag ? `(#${hashtag.split(",").join(" OR #")})` : "";
+  const query = `${kQuery} ${hQuery} until:${until} since:${since}`;
   return query;
 };
 
@@ -22,7 +23,7 @@ export const fetchToken = async (): Promise<string> => {
   const fetchOption = {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${env.Bearer}`,
+      "Authorization": `Bearer ${env.BEARER}`,
     },
   };
   const res = await fetch(url, fetchOption);
@@ -69,7 +70,7 @@ export const fetchTweets = async (
   });
   const fetchOption = {
     headers: {
-      "Authorization": `Bearer ${env.Bearer}`,
+      "Authorization": `Bearer ${env.BEARER}`,
       "x-guest-token": token,
     },
   };
@@ -148,20 +149,61 @@ export const fetchTweets = async (
   };
 };
 
-export const saveTweets = (dbTweets: DBTweets, tweets: Tweet[]): boolean => {
-  let saved = false;
+export const saveTweets = async (
+  tweets: Tweet[],
+  idTweets: Set<string>,
+): Promise<number> => {
+  let saved = 0;
   for (const tweet of tweets) {
-    if (!dbTweets.ids.has(tweet.id)) {
-      dbTweets.tweets.push(tweet);
-      dbTweets.ids.add(tweet.id);
-      saved = true;
+    const {
+      parent_id,
+      parent_user_id,
+      id,
+      user_id,
+      full_text,
+      lang,
+      retweet_count,
+      favorite_count,
+      reply_count,
+      quote_count,
+      created_at,
+    } = tweet;
+    if (!idTweets.has(id)) {
+      idTweets.add(id);
+      saved++;
+    }
+    const hasTweet = await db.query("SELECT 1 FROM Tweets WHERE Id = ?", [id]);
+    if (hasTweet.length === 0) {
+      await db.execute(
+        `INSERT INTO Tweets(
+        Id,
+        UserId,
+        Text,
+        Lang,
+        Nretweet,
+        Nfavorite,
+        Nreply,
+        Nqoute,
+        ParentId,
+        ParentUserId,
+        CreatedAt
+      ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          id,
+          user_id,
+          full_text,
+          lang,
+          retweet_count,
+          favorite_count,
+          reply_count,
+          quote_count,
+          parent_id,
+          parent_user_id,
+          created_at,
+        ],
+      );
     }
   }
-  dbTweets.tweets = _.orderBy(
-    dbTweets.tweets,
-    ({ created_at }: { created_at: string }) => created_at,
-    ["desc"],
-  );
   return saved;
 };
 

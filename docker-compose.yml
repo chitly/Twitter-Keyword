@@ -2,8 +2,8 @@ version: '3'
 
 services:
   cu-covid-db:
-    image: mysql:8.0
-    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    image: mariadb:10.4
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
     ports:
       - '3019:3306'
     volumes:

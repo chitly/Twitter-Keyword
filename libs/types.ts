@@ -11,8 +11,3 @@ export interface Tweet {
   quote_count: number;
   created_at: string;
 }
-
-export interface DBTweets {
-  ids: Set<string>;
-  tweets: Tweet[];
-}
