@@ -38,8 +38,4 @@ while (count < maxTries) {
   }
 }
 
-// for (const tweet of dbTweets.tweets) {
-//   if (tweet.parent_id !== null) {
-//     console.log(tweet);
-//   }
-// }
+// console.log(dbTweets.tweets.slice(0, 10));

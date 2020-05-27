@@ -5,6 +5,10 @@ export interface Tweet {
   user_id: string;
   full_text: string;
   lang: string;
+  retweet_count: number;
+  favorite_count: number;
+  reply_count: number;
+  quote_count: number;
   created_at: string;
 }
 

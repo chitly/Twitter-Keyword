@@ -88,6 +88,10 @@ export const fetchTweets = async (
         created_at,
         in_reply_to_status_id_str,
         in_reply_to_user_id_str,
+        retweet_count,
+        favorite_count,
+        reply_count,
+        quote_count,
       }: {
         id: number;
         id_str: string;
@@ -97,6 +101,10 @@ export const fetchTweets = async (
         created_at: string;
         in_reply_to_status_id_str: string;
         in_reply_to_user_id_str: string;
+        retweet_count: number;
+        favorite_count: number;
+        reply_count: number;
+        quote_count: number;
       },
     ) => {
       return {
@@ -106,6 +114,10 @@ export const fetchTweets = async (
         user_id: user_id_str,
         full_text,
         lang,
+        retweet_count,
+        favorite_count,
+        reply_count,
+        quote_count,
         created_at: moment(created_at, "ddd MMM D HH:mm:ss Z YYYY").format(
           "YYYY-MM-DD HH:mm:ss",
         ),
