@@ -2,7 +2,9 @@ import _ from "../modules/lodash.ts";
 import moment from "../modules/moment.ts";
 import env from "../modules/dotenv.ts";
 
-export const fetchToken = async () => {
+import { Tweet, DBTweets } from "./types.ts";
+
+export const fetchToken = async (): Promise<string> => {
   const url = "https://api.twitter.com/1.1/guest/activate.json";
   const fetchOption = {
     method: "POST",
@@ -19,7 +21,7 @@ export const fetchTweets = async (
   keyword: string,
   token: string,
   cursor: string,
-) => {
+): Promise<{ tweets: Tweet[]; nextCursor: string }> => {
   const url = "https://api.twitter.com/2/search/adaptive.json?";
   const params = new URLSearchParams({
     include_profile_interstitial_type: "1",
@@ -78,22 +80,37 @@ export const fetchTweets = async (
   const filteredTweets = _.mapObject(
     tweets,
     (
-      { id_str, user_id_str, full_text, lang, created_at }: {
+      {
+        id_str,
+        user_id_str,
+        full_text,
+        lang,
+        created_at,
+        in_reply_to_status_id_str,
+        in_reply_to_user_id_str,
+      }: {
+        id: number;
         id_str: string;
         user_id_str: string;
         full_text: string;
         lang: string;
         created_at: string;
+        in_reply_to_status_id_str: string;
+        in_reply_to_user_id_str: string;
       },
-    ) => ({
-      id: id_str,
-      user_id: user_id_str,
-      full_text,
-      lang,
-      created_at: moment(created_at, "ddd MMM D HH:mm:ss Z YYYY").format(
-        "YYYY-MM-DD HH:mm:ss",
-      ),
-    }),
+    ) => {
+      return {
+        parent_id: in_reply_to_status_id_str,
+        parent_user_id: in_reply_to_user_id_str,
+        id: id_str,
+        user_id: user_id_str,
+        full_text,
+        lang,
+        created_at: moment(created_at, "ddd MMM D HH:mm:ss Z YYYY").format(
+          "YYYY-MM-DD HH:mm:ss",
+        ),
+      };
+    },
   );
   const orderedTweets = _.orderBy(
     filteredTweets,
@@ -104,4 +121,25 @@ export const fetchTweets = async (
     tweets: orderedTweets,
     nextCursor,
   };
+};
+
+export const saveTweets = (dbTweets: DBTweets, tweets: Tweet[]): boolean => {
+  let saved = false;
+  for (const tweet of tweets) {
+    if (!dbTweets.ids.has(tweet.id)) {
+      dbTweets.tweets.push(tweet);
+      dbTweets.ids.add(tweet.id);
+      saved = true;
+    }
+  }
+  dbTweets.tweets = _.orderBy(
+    dbTweets.tweets,
+    ({ created_at }: { created_at: string }) => created_at,
+    ["desc"],
+  );
+  return saved;
+};
+
+export const sleep = (sec: number): Promise<any> => {
+  return new Promise((resolve) => setTimeout(resolve, sec * 1000));
 };
