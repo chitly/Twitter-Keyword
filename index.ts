@@ -10,15 +10,17 @@ import {
 } from "./libs/utils.ts";
 
 const startTime = moment();
-const { keyword, since, until } = args;
-console.log(`keyword=${keyword} since=${since} until=${until}`);
+const { keyword, language, since, until } = args;
+console.log(
+  `keyword=${keyword} language=${language} since=${since} until=${until}`,
+);
 
 for (
   let p = moment(until, "YYYY-MM-DD");
   p >= moment(since, "YYYY-MM-DD");
   p = p.add(-1, "days")
 ) {
-  const query = getQuery(keyword, p);
+  const query = getQuery(keyword, language, p);
   console.log("query", query);
   const queryTime = moment();
   const token = await fetchToken();
@@ -38,14 +40,17 @@ for (
           token,
           cursor,
         );
-        const { nTweets, nTweetsSaved } = await saveTweets(tweets, idTweets);
+        const { nTweets, nTweetsSaved, nTweetsKeywordsSaved } =
+          await saveTweets(tweets, idTweets, keyword);
         if (nTweets === 0) {
           console.log("saveRetry", saveRetry);
           if (++saveRetry === maxSaveRetries) break;
         }
         const timeUsed = moment.duration(moment().diff(tmpTime)).asSeconds();
         console.log("time used", timeUsed, "sec");
-        console.log(`got ${nTweets} tweets, and saved ${nTweetsSaved} tweets`);
+        console.log(`got ${nTweets} tweets`);
+        console.log(`saved ${nTweetsSaved} tweets`);
+        console.log(`saved ${nTweetsKeywordsSaved} tweets_keywords`);
         cursor = nextCursor;
       }
       const timeUsed = moment.duration(moment().diff(queryTime)).asSeconds();

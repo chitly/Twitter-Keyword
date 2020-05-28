@@ -5,11 +5,17 @@ import env from "../modules/dotenv.ts";
 import db from "./db.ts";
 import { Tweet } from "./types.ts";
 
-export const getQuery = (keyword: string, date: Moment): string => {
+export const getQuery = (
+  keyword: string,
+  language: string,
+  date: Moment,
+): string => {
   const since = moment(date).format("YYYY-MM-DD");
   const until = moment(date).add(1, "days").format("YYYY-MM-DD");
-  const kQuery = keyword ? `(${keyword.split(",").join(" OR ")})` : "";
-  const query = `${kQuery} until:${until} since:${since}`;
+  const kQuery = keyword
+    ? `(${keyword.toLowerCase().split(",").join(" OR ")})`
+    : "";
+  const query = `${kQuery} until:${until} since:${since} lang:${language}`;
   return query;
 };
 
@@ -147,9 +153,13 @@ export const fetchTweets = async (
 export const saveTweets = async (
   tweets: Tweet[],
   idTweets: Set<string>,
-): Promise<{ nTweets: number; nTweetsSaved: number }> => {
+  keyword: string,
+): Promise<
+  { nTweets: number; nTweetsSaved: number; nTweetsKeywordsSaved: number }
+> => {
   let nTweets = 0;
   let nTweetsSaved = 0;
+  let nTweetsKeywordsSaved = 0;
   for (const tweet of tweets) {
     const {
       parent_id,
@@ -200,8 +210,24 @@ export const saveTweets = async (
       );
       nTweetsSaved++;
     }
+    const keywords = keyword.split(",");
+    for (const k of keywords) {
+      if (full_text.toLowerCase().indexOf(k) >= 0) {
+        const hasKeyword = await db.query(
+          "SELECT 1 FROM Tweets_Keywords WHERE TweetId = ? AND Keyword = ?",
+          [id, k],
+        );
+        if (hasKeyword.length === 0) {
+          await db.execute(
+            "INSERT INTO Tweets_Keywords(TweetId, Keyword) values(? ,?)",
+            [id, k],
+          );
+          nTweetsKeywordsSaved++;
+        }
+      }
+    }
   }
-  return { nTweets, nTweetsSaved };
+  return { nTweets, nTweetsSaved, nTweetsKeywordsSaved };
 };
 
 export const sleep = (sec: number): Promise<any> => {

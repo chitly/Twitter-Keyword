@@ -12,6 +12,7 @@ This project want to get the twitter posts by keyword and hashtag
 It has 4 arguments that you have to input.
 
 - `-k` for keyword that you want to search (Delimiter: `,`)
+- `-l` for language that you want to search (Default: `th`)
 - `-s` for since date that you want to search (Format 'YYYY-MM-DD')
 - `-u` for until date that you want tot seach (Format 'YYYY-MM-DD')
 
