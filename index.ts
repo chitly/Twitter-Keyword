@@ -10,17 +10,15 @@ import {
 } from "./libs/utils.ts";
 
 const startTime = moment();
-const { keyword, hashtag, since, until } = args;
-console.log(
-  `keyword=${keyword} hashtag=${hashtag} since=${since} until=${until}`,
-);
+const { keyword, since, until } = args;
+console.log(`keyword=${keyword} since=${since} until=${until}`);
 
 for (
   let p = moment(until, "YYYY-MM-DD");
   p >= moment(since, "YYYY-MM-DD");
   p = p.add(-1, "days")
 ) {
-  const query = getQuery(keyword, hashtag, p);
+  const query = getQuery(keyword, p);
   console.log("query", query);
   const queryTime = moment();
   const token = await fetchToken();

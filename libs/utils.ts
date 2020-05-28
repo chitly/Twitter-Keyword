@@ -5,16 +5,11 @@ import env from "../modules/dotenv.ts";
 import db from "./db.ts";
 import { Tweet } from "./types.ts";
 
-export const getQuery = (
-  keyword: string,
-  hashtag: string,
-  date: Moment,
-): string => {
+export const getQuery = (keyword: string, date: Moment): string => {
   const since = moment(date).format("YYYY-MM-DD");
   const until = moment(date).add(1, "days").format("YYYY-MM-DD");
   const kQuery = keyword ? `(${keyword.split(",").join(" OR ")})` : "";
-  const hQuery = hashtag ? `(#${hashtag.split(",").join(" OR #")})` : "";
-  const query = `${kQuery} ${hQuery} until:${until} since:${since}`;
+  const query = `${kQuery} until:${until} since:${since}`;
   return query;
 };
 
