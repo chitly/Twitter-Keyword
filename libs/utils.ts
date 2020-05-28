@@ -210,7 +210,7 @@ export const saveTweets = async (
       );
       nTweetsSaved++;
     }
-    const keywords = keyword.split(",");
+    const keywords = keyword.toLowerCase().split(",");
     for (const k of keywords) {
       if (full_text.toLowerCase().indexOf(k) >= 0) {
         const hasKeyword = await db.query(
