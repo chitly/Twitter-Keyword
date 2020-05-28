@@ -6,10 +6,11 @@ This project want to get the twitter posts by keyword and hashtag
 
 - please install [deno](https://deno.land/manual/getting_started/installation)
 - please install [docker](https://docs.docker.com/get-docker/)
+- rename `.env.template` file to `.env` and you can change the confic as you want.
 
 ## How to run for collecting tweets
 
-First you have to turn on Database server with docker.
+First, you have to turn on Database server with docker.
 
 Please follow this command and wait a minute.
 
