@@ -1,0 +1,17 @@
+[
+  {
+    "name": "TweetId",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Keyword",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "PartitionDate",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  }
+]

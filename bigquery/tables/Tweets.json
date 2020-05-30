@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Id",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "UserId",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Text",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Lang",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Nretweet",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Nfavorite",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Nreply",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Nqoute",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "ParentId",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ParentUserId",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CreatedAt",
+    "type": "DATETIME",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "PartitionDate",
+    "type": "DATE",
+    "mode": "REQUIRED"
+  }
+]
