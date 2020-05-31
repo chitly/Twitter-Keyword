@@ -33,6 +33,7 @@ const exportJsonFile = async () => {
     const tweets_keywords = await db.query('select * from Tweets_Keywords');
     writeTweetsJson(tweets);
     writeTweetsKeywordsJson(tweets_keywords);
+    console.log('Completed');
   } catch (err) {
     console.error('exportJsonFile', err);
     throw err;
@@ -42,7 +43,6 @@ const exportJsonFile = async () => {
 console.log('Start export json for importing to bigquery');
 try {
   exportJsonFile();
-  console.log('Completed');
 } catch (err) {
   console.error('error', err);
   throw err;
