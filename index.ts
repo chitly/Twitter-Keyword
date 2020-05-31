@@ -1,5 +1,5 @@
-import moment from "./modules/moment.ts";
-import args from "./modules/args.ts";
+import moment from './modules/moment.ts';
+import args from './modules/args.ts';
 
 import {
   getQuery,
@@ -7,24 +7,24 @@ import {
   fetchTweets,
   saveTweets,
   sleep,
-} from "./libs/utils.ts";
+} from './libs/utils.ts';
 
 const startTime = moment();
 const { keyword, language, since, until } = args;
 console.log(
-  `keyword=${keyword} language=${language} since=${since} until=${until}`,
+  `keyword=${keyword} language=${language} since=${since} until=${until}`
 );
 
 for (
-  let p = moment(until, "YYYY-MM-DD");
-  p >= moment(since, "YYYY-MM-DD");
-  p = p.add(-1, "days")
+  let p = moment(until, 'YYYY-MM-DD');
+  p >= moment(since, 'YYYY-MM-DD');
+  p = p.add(-1, 'days')
 ) {
   const query = getQuery(keyword, language, p);
-  console.log("query", query);
+  console.log('query', query);
   const queryTime = moment();
   const token = await fetchToken();
-  let cursor = "";
+  let cursor = '';
   const idTweets: Set<string> = new Set();
 
   let fetchRetry = 0;
@@ -35,29 +35,27 @@ for (
       const maxSaveRetries = 3;
       while (saveRetry < maxSaveRetries) {
         const tmpTime = moment();
-        const { tweets, nextCursor } = await fetchTweets(
-          query,
-          token,
-          cursor,
+        const { tweets, nextCursor } = await fetchTweets(query, token, cursor);
+        const { nTweetsSaved, nTweetsKeywordsSaved } = await saveTweets(
+          tweets,
+          idTweets,
+          keyword
         );
-        const { nTweets, nTweetsSaved, nTweetsKeywordsSaved } =
-          await saveTweets(tweets, idTweets, keyword);
-        if (nTweets === 0) {
-          console.log("saveRetry", saveRetry);
+        if (nTweetsSaved === 0) {
+          console.log('saveRetry', saveRetry);
           if (++saveRetry === maxSaveRetries) break;
         }
         const timeUsed = moment.duration(moment().diff(tmpTime)).asSeconds();
-        console.log("time used", timeUsed, "sec");
-        console.log(`got ${nTweets} tweets`);
+        console.log('time used', timeUsed, 'sec');
         console.log(`saved ${nTweetsSaved} tweets`);
         console.log(`saved ${nTweetsKeywordsSaved} tweets_keywords`);
         cursor = nextCursor;
       }
       const timeUsed = moment.duration(moment().diff(queryTime)).asSeconds();
-      console.log("query time used", timeUsed, "sec");
+      console.log('query time used', timeUsed, 'sec');
       break;
     } catch (err) {
-      console.log("fetchRetry", fetchRetry, "cursor", cursor);
+      console.log('fetchRetry', fetchRetry, 'cursor', cursor);
       await sleep(60);
       if (++fetchRetry === maxFetchRetries) throw err;
     }
@@ -65,4 +63,4 @@ for (
 }
 
 const timeUsed = moment.duration(moment().diff(startTime)).asSeconds();
-console.log("all time used", timeUsed, "sec");
+console.log('all time used', timeUsed, 'sec');
