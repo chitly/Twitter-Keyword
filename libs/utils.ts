@@ -219,8 +219,8 @@ export const saveTweets = async (
         );
         if (hasKeyword.length === 0) {
           await db.execute(
-            "INSERT INTO Tweets_Keywords(TweetId, Keyword) values(? ,?)",
-            [id, k],
+            "INSERT INTO Tweets_Keywords(TweetId, Keyword, CreatedAt) values(?, ?, ?)",
+            [id, k, created_at],
           );
           nTweetsKeywordsSaved++;
         }
