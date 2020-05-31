@@ -10,8 +10,13 @@
     "mode": "REQUIRED"
   },
   {
+    "name": "CreatedAt",
+    "type": "DATETIME",
+    "mode": "REQUIRED"
+  },
+  {
     "name": "PartitionDate",
     "type": "DATE",
-    "mode": "NULLABLE"
+    "mode": "REQUIRED"
   }
 ]

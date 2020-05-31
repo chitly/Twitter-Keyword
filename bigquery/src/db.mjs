@@ -6,14 +6,17 @@ const {
 } = Config;
 
 export const getDB = async () => {
-  const pool = await mysql.createPool({
-    host,
-    port,
-    user,
-    password,
-    database: name,
-  });
-  return pool;
+  try {
+    const pool = await mysql.createPool({
+      host,
+      port,
+      user,
+      password,
+      database: name,
+    });
+    return pool;
+  } catch (err) {
+    console.error('getDB', err);
+    throw err;
+  }
 };
-
-export default getDB;

@@ -1,3 +1,4 @@
 .env
 bigquery/node_modules
 bigquery/credentials
+bigquery/jsons

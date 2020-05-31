@@ -16,6 +16,7 @@
     "@google-cloud/bigquery": "^4.7.0",
     "@std/esm": "^0.26.0",
     "dotenv": "^8.2.0",
+    "moment": "^2.26.0",
     "promise-mysql": "^4.1.3"
   }
 }
