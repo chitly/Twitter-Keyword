@@ -5,10 +5,14 @@ const fullArgs: {
   language: string;
   since: string;
   until: string;
+  group: string;
+  extend: boolean;
 } = {
   keyword: args.k || args.keyword || '',
   language: args.l || args.language || 'th',
   since: args.s || args.since || '',
   until: args.u || args.until || '',
+  group: args.g || args.group || '',
+  extend: args.e || args.extend || false,
 };
 export default fullArgs;

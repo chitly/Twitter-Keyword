@@ -9,21 +9,21 @@ import {
 } from "../libs/utils.ts";
 
 const getTweets = async (
-  keyword: string,
+  keywords: Array<string>,
   language: string,
   since: string,
   until: string,
 ) => {
   const startTime = moment();
   console.log(
-    `keyword=${keyword} language=${language} since=${since} until=${until}`,
+    `keyword=${keywords} language=${language} since=${since} until=${until}`,
   );
   for (
     let p = moment(until, "YYYY-MM-DD");
     p >= moment(since, "YYYY-MM-DD");
     p = p.add(-1, "days")
   ) {
-    const query = getQuery(keyword, language, p);
+    const query = getQuery(keywords, language, p);
     console.log("query", query);
     const queryTime = moment();
     const token = await fetchToken();
@@ -46,7 +46,7 @@ const getTweets = async (
           const { nTweetsSaved, nTweetsKeywordsSaved } = await saveTweets(
             tweets,
             idTweets,
-            keyword,
+            keywords,
           );
           if (nTweetsSaved === 0) {
             console.log("saveRetry", saveRetry);
