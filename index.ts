@@ -8,7 +8,7 @@ if (keyword) {
 } else if (group) {
   if (group in KeywordGroups) {
     const { required, others } = KeywordGroups[group];
-    if (extend) {
+    if (extend && others) {
       getTweets([required.join(','), others.join(',')], language, since, until);
     } else {
       getTweets([required.join(',')], language, since, until);
@@ -20,12 +20,14 @@ if (keyword) {
       console.log('group', group);
       const { required, others } = KeywordGroups[group];
       await getTweets([required.join(',')], language, since, until);
-      await getTweets(
-        [required.join(','), others.join(',')],
-        language,
-        since,
-        until
-      );
+      if (others) {
+        await getTweets(
+          [required.join(','), others.join(',')],
+          language,
+          since,
+          until
+        );
+      }
     }
   };
   getAll();

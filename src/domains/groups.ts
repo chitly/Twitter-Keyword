@@ -22,7 +22,6 @@ export const KeywordGroups: { [index: string]: any } = {
       'covid',
       'corona',
     ],
-    others: [],
   },
   เจลแอลกอฮอล์: {
     required: ['เจล', 'แอลกอฮอล์'],
@@ -46,11 +45,9 @@ export const KeywordGroups: { [index: string]: any } = {
   },
   ประกัน: {
     required: ['ประกัน'],
-    others: [],
   },
   โรงพยาบาล: {
     required: ['โรงพยาบาล', 'รพ'],
-    others: [],
   },
   ขาดแคลน: {
     required: ['ขาดแคลน'],
