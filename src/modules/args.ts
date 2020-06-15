@@ -7,12 +7,14 @@ const fullArgs: {
   until: string;
   group: string;
   extend: boolean;
+  all: boolean;
 } = {
   keyword: args.k || args.keyword || '',
   language: args.l || args.language || 'th',
-  since: args.s || args.since || '',
-  until: args.u || args.until || '',
+  since: args.s || args.since || '2020-01-01',
+  until: args.u || args.until || '2020-05-31',
   group: args.g || args.group || '',
   extend: args.e || args.extend || false,
+  all: args.a || args.all || false,
 };
 export default fullArgs;
