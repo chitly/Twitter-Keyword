@@ -33,7 +33,7 @@ export const saveDomains = async () => {
     for (const topic of topics) {
       await db.execute(
         'REPLACE INTO Domains_Topics(Domain, Topic) values(?, ?)',
-        [topic, domain]
+        [domain, topic]
       );
     }
   }
