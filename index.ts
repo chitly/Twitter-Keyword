@@ -1,13 +1,18 @@
 import args from './src/modules/args.ts';
 import getTweets from './src/scripts/getTweets.ts';
-import { KeywordGroups } from './src/domains/groups.ts';
+import {
+  saveKeywords,
+  saveTopics,
+  saveDomains,
+} from './src/scripts/saveInfo.ts';
+import { TopicKeywords } from './src/domains/groups.ts';
 
-const { keyword, language, since, until, group, extend, all } = args;
+const { keyword, language, since, until, topic, extend, all, saveInfo } = args;
 if (keyword) {
   getTweets([keyword], language, since, until);
-} else if (group) {
-  if (group in KeywordGroups) {
-    const { required, others } = KeywordGroups[group];
+} else if (topic) {
+  if (topic in TopicKeywords) {
+    const { required, others } = TopicKeywords[topic];
     if (extend && others) {
       getTweets([required.join(','), others.join(',')], language, since, until);
     } else {
@@ -16,9 +21,9 @@ if (keyword) {
   }
 } else if (all) {
   const getAll = async () => {
-    for (const group of Object.keys(KeywordGroups)) {
-      console.log('group', group);
-      const { required, others } = KeywordGroups[group];
+    for (const topic of Object.keys(TopicKeywords)) {
+      console.log('topic', topic);
+      const { required, others } = TopicKeywords[topic];
       await getTweets([required.join(',')], language, since, until);
       if (others) {
         await getTweets(
@@ -31,6 +36,14 @@ if (keyword) {
     }
   };
   getAll();
+} else if (saveInfo) {
+  const saveAllInfo = async () => {
+    await saveKeywords();
+    await saveTopics();
+    await saveDomains();
+    console.log('save completed');
+  };
+  saveAllInfo();
 } else {
   console.log("Can't run this command");
 }

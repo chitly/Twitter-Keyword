@@ -1,4 +1,4 @@
-export const TopicGroups: { [index: string]: any } = {
+export const DomainTopics: { [index: string]: any } = {
   สินค้าเวชภัณฑ์: ['เจลแอลกอฮอล์', 'หน้ากากอนามัย'],
   ระบบบริการสุขภาพ: [
     'ค่ารักษา',
@@ -10,7 +10,7 @@ export const TopicGroups: { [index: string]: any } = {
   ],
 };
 
-export const KeywordGroups: { [index: string]: any } = {
+export const TopicKeywords: { [index: string]: any } = {
   โควิด: {
     required: [
       'ไวรัส',
@@ -41,7 +41,7 @@ export const KeywordGroups: { [index: string]: any } = {
   },
   บุคลากร: {
     required: ['บุคลากร', 'หมอ'],
-    others: ['โรงพยาบาล', 'รw', 'กลัว', 'กักตัว', 'อาหาร', 'ผีน้อย'],
+    others: ['โรงพยาบาล', 'รพ', 'กลัว', 'กักตัว', 'อาหาร', 'ผีน้อย'],
   },
   ประกัน: {
     required: ['ประกัน'],
@@ -55,4 +55,4 @@ export const KeywordGroups: { [index: string]: any } = {
   },
 };
 
-export default { TopicGroups, KeywordGroups };
+export default { DomainTopics, TopicKeywords };
