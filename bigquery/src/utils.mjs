@@ -142,3 +142,54 @@ export const writeTweetsKeywordsJson = tweets_keywords => {
     throw err;
   }
 };
+
+export const writeKeywordsJson = keywords => {
+  try {
+    const file = fs.createWriteStream('jsons/keywords.json', {
+      encoding: 'utf8',
+    });
+    for (const keyword of keywords) {
+      const data = JSON.stringify(keyword);
+      file.write(data);
+      file.write('\n');
+    }
+    file.end();
+  } catch (err) {
+    console.error('writeKeywordsJson', err);
+    throw err;
+  }
+};
+
+export const writeGroupsKeywordsJson = groupsKeywords => {
+  try {
+    const file = fs.createWriteStream('jsons/groupsKeywords.json', {
+      encoding: 'utf8',
+    });
+    for (const groupKeyword of groupsKeywords) {
+      const data = JSON.stringify(groupKeyword);
+      file.write(data);
+      file.write('\n');
+    }
+    file.end();
+  } catch (err) {
+    console.error('writeGroupsKeywordsJson', err);
+    throw err;
+  }
+};
+
+export const writeTopicsGroupsJson = topicsGroups => {
+  try {
+    const file = fs.createWriteStream('jsons/topicsGroups.json', {
+      encoding: 'utf8',
+    });
+    for (const topicGroup of topicsGroups) {
+      const data = JSON.stringify(topicGroup);
+      file.write(data);
+      file.write('\n');
+    }
+    file.end();
+  } catch (err) {
+    console.error('writeTopicsGroupsJson', err);
+    throw err;
+  }
+};
