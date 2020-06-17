@@ -1,66 +1,36 @@
-import moment from './modules/moment.ts';
-import args from './modules/args.ts';
+import args from './src/modules/args.ts';
+import getTweets from './src/scripts/getTweets.ts';
+import { KeywordGroups } from './src/domains/groups.ts';
 
-import {
-  getQuery,
-  fetchToken,
-  fetchTweets,
-  saveTweets,
-  sleep,
-} from './libs/utils.ts';
-
-const startTime = moment();
-const { keyword, language, since, until } = args;
-console.log(
-  `keyword=${keyword} language=${language} since=${since} until=${until}`
-);
-
-for (
-  let p = moment(until, 'YYYY-MM-DD');
-  p >= moment(since, 'YYYY-MM-DD');
-  p = p.add(-1, 'days')
-) {
-  const query = getQuery(keyword, language, p);
-  console.log('query', query);
-  const queryTime = moment();
-  const token = await fetchToken();
-  let cursor = '';
-  const idTweets: Set<string> = new Set();
-
-  let fetchRetry = 0;
-  const maxFetchRetries = 3;
-  while (fetchRetry < maxFetchRetries) {
-    try {
-      let saveRetry = 0;
-      const maxSaveRetries = 3;
-      while (saveRetry < maxSaveRetries) {
-        const tmpTime = moment();
-        const { tweets, nextCursor } = await fetchTweets(query, token, cursor);
-        const { nTweetsSaved, nTweetsKeywordsSaved } = await saveTweets(
-          tweets,
-          idTweets,
-          keyword
-        );
-        if (nTweetsSaved === 0) {
-          console.log('saveRetry', saveRetry);
-          if (++saveRetry === maxSaveRetries) break;
-        }
-        const timeUsed = moment.duration(moment().diff(tmpTime)).asSeconds();
-        console.log('time used', timeUsed, 'sec');
-        console.log(`saved ${nTweetsSaved} tweets`);
-        console.log(`saved ${nTweetsKeywordsSaved} tweets_keywords`);
-        cursor = nextCursor;
-      }
-      const timeUsed = moment.duration(moment().diff(queryTime)).asSeconds();
-      console.log('query time used', timeUsed, 'sec');
-      break;
-    } catch (err) {
-      console.log('fetchRetry', fetchRetry, 'cursor', cursor);
-      await sleep(60);
-      if (++fetchRetry === maxFetchRetries) throw err;
+const { keyword, language, since, until, group, extend, all } = args;
+if (keyword) {
+  getTweets([keyword], language, since, until);
+} else if (group) {
+  if (group in KeywordGroups) {
+    const { required, others } = KeywordGroups[group];
+    if (extend && others) {
+      getTweets([required.join(','), others.join(',')], language, since, until);
+    } else {
+      getTweets([required.join(',')], language, since, until);
     }
   }
+} else if (all) {
+  const getAll = async () => {
+    for (const group of Object.keys(KeywordGroups)) {
+      console.log('group', group);
+      const { required, others } = KeywordGroups[group];
+      await getTweets([required.join(',')], language, since, until);
+      if (others) {
+        await getTweets(
+          [required.join(','), others.join(',')],
+          language,
+          since,
+          until
+        );
+      }
+    }
+  };
+  getAll();
+} else {
+  console.log("Can't run this command");
 }
-
-const timeUsed = moment.duration(moment().diff(startTime)).asSeconds();
-console.log('all time used', timeUsed, 'sec');

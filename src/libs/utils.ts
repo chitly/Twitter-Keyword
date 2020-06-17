@@ -6,15 +6,15 @@ import db from './db.ts';
 import { Tweet } from './types.ts';
 
 export const getQuery = (
-  keyword: string,
+  keywords: Array<string>,
   language: string,
   date: Moment
 ): string => {
   const since = moment(date).format('YYYY-MM-DD');
   const until = moment(date).add(1, 'days').format('YYYY-MM-DD');
-  const kQuery = keyword
-    ? `(${keyword.toLowerCase().split(',').join(' OR ')})`
-    : '';
+  const kQuery = keywords
+    .map(keyword => `(${keyword.toLowerCase().split(',').join(' OR ')})`)
+    .join(' ');
   const query = `${kQuery} until:${until} since:${since} lang:${language}`;
   return query;
 };
@@ -153,7 +153,7 @@ export const fetchTweets = async (
 export const saveTweets = async (
   tweets: Tweet[],
   idTweets: Set<string>,
-  keyword: string
+  keywords: Array<string>
 ): Promise<{ nTweetsSaved: number; nTweetsKeywordsSaved: number }> => {
   let nTweetsSaved = 0;
   let nTweetsKeywordsSaved = 0;
@@ -203,8 +203,10 @@ export const saveTweets = async (
       );
       nTweetsSaved++;
     }
-    const keywords = keyword.toLowerCase().split(',');
-    for (const k of keywords) {
+    const keywordList = _.flattenDeep(
+      keywords.map(keyword => keyword.toLowerCase().split(','))
+    );
+    for (const k of keywordList) {
       if (full_text.toLowerCase().indexOf(k) >= 0) {
         const hasKeyword = await db.query(
           'SELECT 1 FROM Tweets_Keywords WHERE TweetId = ? AND Keyword = ?',
