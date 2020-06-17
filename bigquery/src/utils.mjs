@@ -160,36 +160,36 @@ export const writeKeywordsJson = keywords => {
   }
 };
 
-export const writeGroupsKeywordsJson = groupsKeywords => {
+export const writeTopicsKeywordsJson = topicsKeywords => {
   try {
-    const file = fs.createWriteStream('jsons/groupsKeywords.json', {
+    const file = fs.createWriteStream('jsons/topicsKeywords.json', {
       encoding: 'utf8',
     });
-    for (const groupKeyword of groupsKeywords) {
-      const data = JSON.stringify(groupKeyword);
+    for (const topicKeyword of topicsKeywords) {
+      const data = JSON.stringify(topicKeyword);
       file.write(data);
       file.write('\n');
     }
     file.end();
   } catch (err) {
-    console.error('writeGroupsKeywordsJson', err);
+    console.error('writeTopicsKeywordsJson', err);
     throw err;
   }
 };
 
-export const writeTopicsGroupsJson = topicsGroups => {
+export const writeDomainsTopicsJson = domainsTopics => {
   try {
-    const file = fs.createWriteStream('jsons/topicsGroups.json', {
+    const file = fs.createWriteStream('jsons/domainsTopics.json', {
       encoding: 'utf8',
     });
-    for (const topicGroup of topicsGroups) {
-      const data = JSON.stringify(topicGroup);
+    for (const domainTopic of domainsTopics) {
+      const data = JSON.stringify(domainTopic);
       file.write(data);
       file.write('\n');
     }
     file.end();
   } catch (err) {
-    console.error('writeTopicsGroupsJson', err);
+    console.error('writeDomainsTopicsJson', err);
     throw err;
   }
 };
