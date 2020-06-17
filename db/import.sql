@@ -32,7 +32,7 @@ CREATE TABLE `CUCovid`.`Tweets_Keywords` (
 DROP TABLE IF EXISTS `Topics_Keywords`;
 CREATE TABLE `CUCovid`.`Topics_Keywords` (
   `Topic` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `Keywords` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Keyword` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`Topic`, `Keywords`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
