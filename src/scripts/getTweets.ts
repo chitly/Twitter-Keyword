@@ -4,12 +4,13 @@ import {
   getQuery,
   fetchToken,
   fetchTweets,
+  saveUsers,
   saveTweets,
   sleep,
 } from "../libs/utils.ts";
 
 const getTweets = async (
-  keywords: Array<string>,
+  keywords: string[],
   language: string,
   since: string,
   until: string,
@@ -31,18 +32,19 @@ const getTweets = async (
     const idTweets: Set<string> = new Set();
 
     let fetchRetry = 0;
-    const maxFetchRetries = 3;
+    const maxFetchRetries = 1;
     while (fetchRetry < maxFetchRetries) {
       try {
         let saveRetry = 0;
-        const maxSaveRetries = 3;
+        const maxSaveRetries = 1;
         while (saveRetry < maxSaveRetries) {
           const tmpTime = moment();
-          const { tweets, nextCursor } = await fetchTweets(
+          const { tweets, users, nextCursor } = await fetchTweets(
             query,
             token,
             cursor,
           );
+          await saveUsers(users);
           const { nTweetsSaved, nTweetsKeywordsSaved } = await saveTweets(
             tweets,
             idTweets,
@@ -63,8 +65,8 @@ const getTweets = async (
         break;
       } catch (err) {
         console.log("fetchRetry", fetchRetry, "cursor", cursor);
-        await sleep(60);
         if (++fetchRetry === maxFetchRetries) throw err;
+        await sleep(60);
       }
     }
   }
