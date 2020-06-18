@@ -169,7 +169,7 @@ export const fetchTweets = async (
                 name,
                 screen_name,
                 location: location ? location : null,
-                description,
+                description: description ? description : null,
                 url,
                 followers_count,
                 fast_followers_count,
