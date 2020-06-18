@@ -3,6 +3,7 @@ import moment from 'moment';
 import fs from 'fs';
 
 import Config from './config';
+import deepcut from './deepcut';
 
 export const getBigQueryClient = () => {
   const { BigQuery } = GCloud;
@@ -100,6 +101,7 @@ export const writeTweetsJson = tweets => {
         Id,
         UserId,
         Text,
+        Words: deepcut(Text),
         Lang,
         Nretweet,
         Nfavorite,

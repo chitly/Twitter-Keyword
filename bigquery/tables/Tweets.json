@@ -15,6 +15,11 @@
     "mode": "REQUIRED"
   },
   {
+    "name": "Words",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
     "name": "Lang",
     "type": "STRING",
     "mode": "REQUIRED"
