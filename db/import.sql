@@ -1,31 +1,52 @@
 DROP TABLE IF EXISTS `Tweets`;
 CREATE TABLE `Tweets` (
-  `Id` varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `UserId` varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `Text` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `Lang` varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `Nretweet` int NOT NULL,
-  `Nfavorite` int NOT NULL,
-  `Nreply` int NOT NULL,
-  `Nqoute` int NOT NULL,
-  `ParentId` varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `ParentUserId` varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `CreatedAt` datetime NOT NULL,
+  `Id` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `UserId` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `Text` VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Lang` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `Nretweet` INT NOT NULL,
+  `Nfavorite` INT NOT NULL,
+  `Nreply` INT NOT NULL,
+  `Nqoute` INT NOT NULL,
+  `ParentId` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `ParentUserId` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `CreatedAt` DATETIME NOT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+DROP TABLE IF EXISTS `Users`;
+CREATE TABLE `CUCovid`.`Users` (
+  `Id` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NOT NULL,
+  `Name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Screen_name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Location` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `Descrption` VARCHAR(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Url` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `Followers_count` INT NOT NULL,
+  `Fast_followers_count` INT NOT NULL,
+  `Normal_followers_count` INT NOT NULL,
+  `Friends_count` INT NOT NULL,
+  `Listed_count` INT NOT NULL,
+  `Favourites_count` INT NOT NULL,
+  `Statuses_count` INT NOT NULL,
+  `Media_count` INT NOT NULL,
+  `Advertiser_account_type` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NOT NULL,
+  `Created_at` DATETIME NOT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 DROP TABLE IF EXISTS `Keywords`;
 CREATE TABLE `CUCovid`.`Keywords` (
-  `Keyword` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Keyword` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`Keyword`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
 DROP TABLE IF EXISTS `Tweets_Keywords`;
 CREATE TABLE `CUCovid`.`Tweets_Keywords` (
-  `TweetId` varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `Keyword` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `CreatedAt` datetime NOT NULL,
+  `TweetId` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `Keyword` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `CreatedAt` DATETIME NOT NULL,
   PRIMARY KEY (`TweetId`, `Keyword`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

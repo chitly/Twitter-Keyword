@@ -3,10 +3,10 @@ import moment, { Moment } from '../modules/moment.ts';
 import env from '../modules/dotenv.ts';
 
 import db from './db.ts';
-import { Tweet } from './types.ts';
+import { Tweet, User } from './types.ts';
 
 export const getQuery = (
-  keywords: Array<string>,
+  keywords: string[],
   language: string,
   date: Moment
 ): string => {
@@ -36,7 +36,7 @@ export const fetchTweets = async (
   keyword: string,
   token: string,
   cursor: string
-): Promise<{ tweets: Tweet[]; nextCursor: string }> => {
+): Promise<{ tweets: Tweet[]; users: User[]; nextCursor: string }> => {
   const url = 'https://api.twitter.com/2/search/adaptive.json?';
   const params = new URLSearchParams({
     include_profile_interstitial_type: '1',
@@ -94,6 +94,7 @@ export const fetchTweets = async (
     const { value } = entry.content.operation.cursor;
     nextCursor = value;
   }
+  let users: User[] = [];
   const filteredTweets = _.mapObject(
     tweets,
     ({
@@ -108,8 +109,8 @@ export const fetchTweets = async (
       favorite_count,
       reply_count,
       quote_count,
+      card,
     }: {
-      id: number;
       id_str: string;
       user_id_str: string;
       full_text: string;
@@ -121,7 +122,73 @@ export const fetchTweets = async (
       favorite_count: number;
       reply_count: number;
       quote_count: number;
+      card: any;
     }) => {
+      if (card && card.users) {
+        users = [
+          ...users,
+          ..._.mapObject(
+            card.users,
+            ({
+              id_str,
+              name,
+              screen_name,
+              location,
+              description,
+              url,
+              followers_count,
+              fast_followers_count,
+              normal_followers_count,
+              friends_count,
+              listed_count,
+              favourites_count,
+              statuses_count,
+              media_count,
+              advertiser_account_type,
+              created_at,
+            }: {
+              id_str: string;
+              name: string;
+              screen_name: string;
+              location: string;
+              description: string;
+              url: string;
+              followers_count: number;
+              fast_followers_count: number;
+              normal_followers_count: number;
+              friends_count: number;
+              listed_count: number;
+              favourites_count: number;
+              statuses_count: number;
+              media_count: number;
+              advertiser_account_type: string;
+              created_at: string;
+            }) => {
+              return {
+                id: id_str,
+                name,
+                screen_name,
+                location: location ? location : null,
+                description,
+                url,
+                followers_count,
+                fast_followers_count,
+                normal_followers_count,
+                friends_count,
+                listed_count,
+                favourites_count,
+                statuses_count,
+                media_count,
+                advertiser_account_type,
+                created_at: moment(
+                  created_at,
+                  'ddd MMM D HH:mm:ss Z YYYY'
+                ).format('YYYY-MM-DD HH:mm:ss'),
+              };
+            }
+          ),
+        ];
+      }
       return {
         parent_id: in_reply_to_status_id_str,
         parent_user_id: in_reply_to_user_id_str,
@@ -146,14 +213,76 @@ export const fetchTweets = async (
   );
   return {
     tweets: orderedTweets,
+    users,
     nextCursor,
   };
+};
+
+export const saveUsers = async (users: User[]) => {
+  for (const user of users) {
+    const {
+      id,
+      name,
+      screen_name,
+      location,
+      description,
+      url,
+      followers_count,
+      fast_followers_count,
+      normal_followers_count,
+      friends_count,
+      listed_count,
+      favourites_count,
+      statuses_count,
+      media_count,
+      advertiser_account_type,
+      created_at,
+    } = user;
+    await db.execute(
+      `REPLACE INTO Users(
+      Id,
+      Name,
+      Screen_name,
+      Location,
+      description,
+      Url,
+      Followers_count,
+      Fast_followers_count,
+      Normal_followers_count,
+      Friends_count,
+      Listed_count,
+      Favourites_count,
+      Statuses_count,
+      Media_count,
+      Advertiser_account_type,
+      Created_at
+    ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        name,
+        screen_name,
+        location,
+        description,
+        url,
+        followers_count,
+        fast_followers_count,
+        normal_followers_count,
+        friends_count,
+        listed_count,
+        favourites_count,
+        statuses_count,
+        media_count,
+        advertiser_account_type,
+        created_at,
+      ]
+    );
+  }
 };
 
 export const saveTweets = async (
   tweets: Tweet[],
   idTweets: Set<string>,
-  keywords: Array<string>
+  keywords: string[]
 ): Promise<{ nTweetsSaved: number; nTweetsKeywordsSaved: number }> => {
   let nTweetsSaved = 0;
   let nTweetsKeywordsSaved = 0;
