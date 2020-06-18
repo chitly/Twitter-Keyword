@@ -77,6 +77,10 @@ export const fetchTweets = async (
   };
   const res = await fetch(url + params, fetchOption);
   const resJson = await res.json();
+  if ('errors' in resJson) {
+    console.error(resJson.errors);
+    throw resJson.errors;
+  }
   const { tweets } = resJson.globalObjects;
   let nextCursor = '';
   if (cursor) {
@@ -166,11 +170,13 @@ export const fetchTweets = async (
             }) => {
               return {
                 id: id_str,
-                name,
-                screen_name,
-                location: location ? location : null,
-                description,
-                url,
+                name: name.replace(/\\/g, '\\\\'),
+                screen_name: screen_name.replace(/\\/g, '\\\\'),
+                location: location ? location.replace(/\\/g, '\\\\') : null,
+                description: description
+                  ? description.replace(/\\/g, '\\\\')
+                  : null,
+                url: url ? url.replace(/\\/g, '\\\\') : null,
                 followers_count,
                 fast_followers_count,
                 normal_followers_count,
@@ -194,7 +200,7 @@ export const fetchTweets = async (
         parent_user_id: in_reply_to_user_id_str,
         id: id_str,
         user_id: user_id_str,
-        full_text,
+        full_text: full_text.replace(/\\/g, '\\\\'),
         lang,
         retweet_count,
         favorite_count,

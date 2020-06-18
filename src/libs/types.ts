@@ -17,7 +17,7 @@ export interface User {
   name: string;
   screen_name: string;
   location?: string;
-  description: string;
+  description?: string;
   url?: string;
   followers_count: number;
   fast_followers_count: number;
