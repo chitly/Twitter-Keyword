@@ -25,7 +25,7 @@ const getTweets = async (
     p = p.add(-1, 'days')
   ) {
     let fetchRetry = 0;
-    const maxFetchRetries = 3;
+    const maxFetchRetries = 1;
     while (fetchRetry < maxFetchRetries) {
       let cursor = '';
       try {
