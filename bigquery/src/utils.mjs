@@ -78,7 +78,7 @@ export const query = async (bigquery, sql, params) => {
   }
 };
 
-export const writeTweetsJson = tweets => {
+export const writeTweetsJson = async tweets => {
   try {
     const file = fs.createWriteStream('jsons/tweets.json', {
       encoding: 'utf8',
@@ -101,7 +101,7 @@ export const writeTweetsJson = tweets => {
         Id,
         UserId,
         Text,
-        Words: deepcut(Text),
+        Words: await deepcut(Text),
         Lang,
         Nretweet,
         Nfavorite,
@@ -141,6 +141,55 @@ export const writeTweetsKeywordsJson = tweets_keywords => {
     file.end();
   } catch (err) {
     console.error('writeTweetsKeywordsJson', err);
+    throw err;
+  }
+};
+
+export const writeUsersJson = users => {
+  try {
+    const file = fs.createWriteStream('jsons/users.json', {
+      encoding: 'utf8',
+    });
+    for (const user of users) {
+      const {
+        Id,
+        Name,
+        ScreenName,
+        Location,
+        Description,
+        Url,
+        Nfollower,
+        Nfriend,
+        Nlisted,
+        Nfavourite,
+        Nstatus,
+        Nmedia,
+        Advertiser,
+        CreatedAt,
+      } = user;
+      const data = JSON.stringify({
+        Id,
+        Name,
+        ScreenName,
+        Location,
+        Description,
+        Url,
+        Nfollower,
+        Nfriend,
+        Nlisted,
+        Nfavourite,
+        Nstatus,
+        Nmedia,
+        Advertiser,
+        CreatedAt: moment(CreatedAt).format('YYYY-MM-DD HH:mm:ss'),
+        PartitionDate: moment(CreatedAt).format('YYYY-MM-DD'),
+      });
+      file.write(data);
+      file.write('\n');
+    }
+    file.end();
+  } catch (err) {
+    console.error('writeUsersJson', err);
     throw err;
   }
 };

@@ -1,0 +1,77 @@
+[
+  {
+    "name": "Id",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Name",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "ScreenName",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Location",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Description",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Url",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Nfollower",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Nfriend",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Nlisted",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Nfavourite",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Nstatus",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Nmedia",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Advertiser",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "CreatedAt",
+    "type": "DATETIME",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "PartitionDate",
+    "type": "DATE",
+    "mode": "REQUIRED"
+  }
+]

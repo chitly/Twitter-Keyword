@@ -4,6 +4,7 @@ import {
   getBigQueryClient,
   query,
   writeTweetsJson,
+  writeUsersJson,
   writeKeywordsJson,
   writeTopicsKeywordsJson,
   writeDomainsTopicsJson,
@@ -32,10 +33,12 @@ const exportJsonFile = async () => {
   try {
     const db = await getDB();
     const tweets = await db.query('select * from Tweets');
+    const users = await db.query('select * from Users');
     const keywords = await db.query('select * from Keywords');
     const topicsKeywords = await db.query('select * from Topics_Keywords');
     const domainsTopics = await db.query('select * from Domains_Topics');
-    writeTweetsJson(tweets);
+    await writeTweetsJson(tweets);
+    writeUsersJson(users);
     writeKeywordsJson(keywords);
     writeTopicsKeywordsJson(topicsKeywords);
     writeDomainsTopicsJson(domainsTopics);

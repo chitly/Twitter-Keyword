@@ -231,6 +231,12 @@ for (let i = 0; i < CHAR_TYPES.length; i++) {
   CHAR_TYPES_MAP[CHAR_TYPES[i]] = i;
 }
 
+const model = new KerasJS.Model({
+  filepath: 'src/assets/model_lite.bin',
+  gpu: false,
+  filesystem: true,
+});
+
 const gen_input = text => {
   const text_pad = `          ${text}          `.split('');
   const n = text.length;
@@ -289,7 +295,7 @@ const parse_prediction = (text, pred) => {
   return tokenized_text;
 };
 
-const predict = async (text, model) => {
+const predict = async text => {
   const input = gen_input(text);
   const predictions = [];
   for (let i = 0; i < text.length; i++) {
@@ -305,13 +311,8 @@ const predict = async (text, model) => {
 
 const tokenizeWords = async text => {
   try {
-    const model = new KerasJS.Model({
-      filepath: 'src/assets/model_lite.bin',
-      gpu: false,
-      filesystem: true,
-    });
     await model.ready();
-    const result = await predict(text, model);
+    const result = await predict(text);
     return result;
   } catch (err) {
     console.error(err);
