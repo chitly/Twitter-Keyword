@@ -81,7 +81,7 @@ export const fetchTweets = async (
     console.error(resJson.errors);
     throw resJson.errors;
   }
-  const { tweets } = resJson.globalObjects;
+  const { tweets, users } = resJson.globalObjects;
   let nextCursor = '';
   if (cursor) {
     const { entry } = resJson.timeline.instructions[2].replaceEntry;
@@ -98,8 +98,7 @@ export const fetchTweets = async (
     const { value } = entry.content.operation.cursor;
     nextCursor = value;
   }
-  let users: User[] = [];
-  const filteredTweets = _.mapObject(
+  const filteredTweets: Tweet[] = _.mapObject(
     tweets,
     ({
       id_str,
@@ -113,7 +112,6 @@ export const fetchTweets = async (
       favorite_count,
       reply_count,
       quote_count,
-      card,
     }: {
       id_str: string;
       user_id_str: string;
@@ -126,69 +124,7 @@ export const fetchTweets = async (
       favorite_count: number;
       reply_count: number;
       quote_count: number;
-      card: any;
     }) => {
-      if (card && card.users) {
-        users = [
-          ...users,
-          ..._.mapObject(
-            card.users,
-            ({
-              id_str,
-              name,
-              screen_name,
-              location,
-              description,
-              url,
-              followers_count,
-              friends_count,
-              listed_count,
-              favourites_count,
-              statuses_count,
-              media_count,
-              advertiser_account_type,
-              created_at,
-            }: {
-              id_str: string;
-              name: string;
-              screen_name: string;
-              location: string;
-              description: string;
-              url: string;
-              followers_count: number;
-              friends_count: number;
-              listed_count: number;
-              favourites_count: number;
-              statuses_count: number;
-              media_count: number;
-              advertiser_account_type: string;
-              created_at: string;
-            }) => {
-              return {
-                id: id_str,
-                name: name.replace(/\\/g, '\\\\'),
-                screen_name: screen_name.replace(/\\/g, '\\\\'),
-                location: location ? location.replace(/\\/g, '\\\\') : null,
-                description: description
-                  ? description.replace(/\\/g, '\\\\')
-                  : null,
-                url: url ? url.replace(/\\/g, '\\\\') : null,
-                followers_count,
-                friends_count,
-                listed_count,
-                favourites_count,
-                statuses_count,
-                media_count,
-                advertiser_account_type,
-                created_at: moment(
-                  created_at,
-                  'ddd MMM D HH:mm:ss Z YYYY'
-                ).format('YYYY-MM-DD HH:mm:ss'),
-              };
-            }
-          ),
-        ];
-      }
       return {
         parent_id: in_reply_to_status_id_str,
         parent_user_id: in_reply_to_user_id_str,
@@ -211,9 +147,62 @@ export const fetchTweets = async (
     ({ created_at }: { created_at: string }) => created_at,
     ['desc']
   );
+  const filteredUsers: User[] = _.mapObject(
+    users,
+    ({
+      id_str,
+      name,
+      screen_name,
+      location,
+      description,
+      url,
+      followers_count,
+      friends_count,
+      listed_count,
+      favourites_count,
+      statuses_count,
+      media_count,
+      advertiser_account_type,
+      created_at,
+    }: {
+      id_str: string;
+      name: string;
+      screen_name: string;
+      location: string;
+      description: string;
+      url: string;
+      followers_count: number;
+      friends_count: number;
+      listed_count: number;
+      favourites_count: number;
+      statuses_count: number;
+      media_count: number;
+      advertiser_account_type: string;
+      created_at: string;
+    }) => {
+      return {
+        id: id_str,
+        name: name.replace(/\\/g, '\\\\'),
+        screen_name: screen_name.replace(/\\/g, '\\\\'),
+        location: location ? location.replace(/\\/g, '\\\\') : null,
+        description: description ? description.replace(/\\/g, '\\\\') : null,
+        url: url ? url.replace(/\\/g, '\\\\') : null,
+        followers_count,
+        friends_count,
+        listed_count,
+        favourites_count,
+        statuses_count,
+        media_count,
+        advertiser_account_type,
+        created_at: moment(created_at, 'ddd MMM D HH:mm:ss Z YYYY').format(
+          'YYYY-MM-DD HH:mm:ss'
+        ),
+      };
+    }
+  );
   return {
     tweets: orderedTweets,
-    users,
+    users: filteredUsers,
     nextCursor,
   };
 };
@@ -248,11 +237,11 @@ export const saveUsers = async (users: User[]) => {
       Nfriend,
       Nlisted,
       Nfavourite,
-      Nstatuse,
+      Nstatus,
       Nmedia,
       Advertiser,
       CreatedAt
-    ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         name,
