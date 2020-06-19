@@ -141,8 +141,6 @@ export const fetchTweets = async (
               description,
               url,
               followers_count,
-              fast_followers_count,
-              normal_followers_count,
               friends_count,
               listed_count,
               favourites_count,
@@ -158,8 +156,6 @@ export const fetchTweets = async (
               description: string;
               url: string;
               followers_count: number;
-              fast_followers_count: number;
-              normal_followers_count: number;
               friends_count: number;
               listed_count: number;
               favourites_count: number;
@@ -178,8 +174,6 @@ export const fetchTweets = async (
                   : null,
                 url: url ? url.replace(/\\/g, '\\\\') : null,
                 followers_count,
-                fast_followers_count,
-                normal_followers_count,
                 friends_count,
                 listed_count,
                 favourites_count,
@@ -234,8 +228,6 @@ export const saveUsers = async (users: User[]) => {
       description,
       url,
       followers_count,
-      fast_followers_count,
-      normal_followers_count,
       friends_count,
       listed_count,
       favourites_count,
@@ -248,20 +240,18 @@ export const saveUsers = async (users: User[]) => {
       `REPLACE INTO Users(
       Id,
       Name,
-      Screen_name,
+      ScreenName,
       Location,
-      description,
+      Description,
       Url,
-      Followers_count,
-      Fast_followers_count,
-      Normal_followers_count,
-      Friends_count,
-      Listed_count,
-      Favourites_count,
-      Statuses_count,
-      Media_count,
-      Advertiser_account_type,
-      Created_at
+      Nfollower,
+      Nfriend,
+      Nlisted,
+      Nfavourite,
+      Nstatuse,
+      Nmedia,
+      Advertiser,
+      CreatedAt
     ) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
@@ -271,8 +261,6 @@ export const saveUsers = async (users: User[]) => {
         description,
         url,
         followers_count,
-        fast_followers_count,
-        normal_followers_count,
         friends_count,
         listed_count,
         favourites_count,
